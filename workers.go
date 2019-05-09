@@ -100,7 +100,7 @@ func failDefault(is *Is, format string, args ...interface{}) {
 
 	failFmt := format
 	if len(is.failFormat) != 0 {
-		failFmt = fmt.Sprintf("%s - %s", format, is.failFormat)
+		failFmt = fmt.Sprintf("%s%s%s", format, is.getMsgSep(), is.failFormat)
 		args = append(args, is.failArgs...)
 	}
 	if is.strict {

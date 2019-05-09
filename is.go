@@ -26,6 +26,7 @@ type Is struct {
 	strict     bool
 	failFormat string
 	failArgs   []interface{}
+	msgSep     string
 }
 
 // New creates a new instance of the Is object and stores a reference to the
@@ -48,23 +49,31 @@ func New(tb testing.TB) *Is {
 // Inside your subtest, you can do the exact same thing to initialize a locally scoped
 // variable that uses the subtest's testing.T object.
 func (is *Is) New(tb testing.TB) *Is {
-	return &Is{
-		TB:         tb,
-		strict:     is.strict,
-		failFormat: is.failFormat,
-		failArgs:   is.failArgs,
-	}
+	newIs := *is
+	newIs.TB = tb
+	return &newIs
 }
 
 // Msg defines a message to print in the event of a failure. This allows you
 // to print out additional information about a failure if it happens.
 func (is *Is) Msg(format string, args ...interface{}) *Is {
-	return &Is{
-		TB:         is.TB,
-		strict:     is.strict,
-		failFormat: format,
-		failArgs:   args,
+	newIs := *is
+	newIs.failFormat = format
+	newIs.failArgs = args
+	return &newIs
+}
+
+func (is *Is) MsgSep(sep string) *Is {
+	newIs := *is
+	newIs.msgSep = sep
+	return &newIs
+}
+
+func (is *Is) getMsgSep() string {
+	if is.msgSep != "" {
+		return is.msgSep
 	}
+	return " - "
 }
 
 // AddMsg appends a message to print in the event of a failure. This allows
@@ -82,48 +91,38 @@ func (is *Is) AddMsg(format string, args ...interface{}) *Is {
 	if is.failFormat == "" {
 		return is.Msg(format, args...)
 	}
-	return &Is{
-		TB:         is.TB,
-		strict:     is.strict,
-		failFormat: fmt.Sprintf("%s - %s", is.failFormat, format),
-		failArgs:   append(is.failArgs, args...),
-	}
+	newIs := *is
+	newIs.failFormat = fmt.Sprintf("%s%s%s", is.failFormat, is.getMsgSep(), format)
+	newIs.failArgs = append(is.failArgs, args...)
+	return &newIs
 }
 
 func (is *Is) PrependMsg(format string, args ...interface{}) *Is {
 	if is.failFormat == "" {
 		return is.Msg(format, args...)
 	}
-	return &Is{
-		TB:         is.TB,
-		strict:     is.strict,
-		failFormat: fmt.Sprintf("%s - %s", format, is.failFormat),
-		failArgs:   append(args, is.failArgs...),
-	}
+	newIs := *is
+	newIs.failFormat = fmt.Sprintf("%s%s%s", format, is.getMsgSep(), is.failFormat)
+	newIs.failArgs = append(args, is.failArgs...)
+	return &newIs
 }
 
 // Lax returns a copy of this instance of Is which does not abort the test if
 // a failure occurs. Use this to run a set of tests and see all the failures
 // at once.
 func (is *Is) Lax() *Is {
-	return &Is{
-		TB:         is.TB,
-		strict:     false,
-		failFormat: is.failFormat,
-		failArgs:   is.failArgs,
-	}
+	newIs := *is
+	newIs.strict = false
+	return &newIs
 }
 
 // Strict returns a copy of this instance of Is which aborts the test if a
 // failure occurs. This is the default behavior, thus this method has no
 // effect unless it is used to reverse a previous call to Lax.
 func (is *Is) Strict() *Is {
-	return &Is{
-		TB:         is.TB,
-		strict:     true,
-		failFormat: is.failFormat,
-		failArgs:   is.failArgs,
-	}
+	newIs := *is
+	newIs.strict = true
+	return &newIs
 }
 
 // Equal performs a deep compare of the provided objects and fails if they are
