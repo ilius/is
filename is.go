@@ -132,13 +132,15 @@ func (is *Is) Strict() *Is {
 // Equal does not respect type differences. If the types are different and
 // comparable (eg int32 and int64), they will be compared as though they are
 // the same type.
-func (is *Is) Equal(actual interface{}, expected interface{}) {
+func (is *Is) Equal(actual interface{}, expected interface{}) bool {
 	is.TB.Helper()
 	if !isEqual(actual, expected) {
 		fail(is, "got '%v' (%s). expected '%v' (%s)",
 			actual, objectTypeName(actual),
 			expected, objectTypeName(expected))
+		return false
 	}
+	return true
 }
 
 // NotEqual performs a deep compare of the provided objects and fails if they are
@@ -147,13 +149,15 @@ func (is *Is) Equal(actual interface{}, expected interface{}) {
 // NotEqual does not respect type differences. If the types are different and
 // comparable (eg int32 and int64), they will be compared as though they are
 // the same type.
-func (is *Is) NotEqual(a interface{}, b interface{}) {
+func (is *Is) NotEqual(a interface{}, b interface{}) bool {
 	is.TB.Helper()
 	if isEqual(a, b) {
 		fail(is, "expected objects '%s' and '%s' not to be equal",
 			objectTypeName(a),
 			objectTypeName(b))
+		return false
 	}
+	return true
 }
 
 // OneOf performs a deep compare of the provided object and an array of
@@ -163,7 +167,7 @@ func (is *Is) NotEqual(a interface{}, b interface{}) {
 // OneOf does not respect type differences. If the types are different and
 // comparable (eg int32 and int64), they will be compared as though they are
 // the same type.
-func (is *Is) OneOf(a interface{}, b ...interface{}) {
+func (is *Is) OneOf(a interface{}, b ...interface{}) bool {
 	is.TB.Helper()
 	result := false
 	for _, o := range b {
@@ -176,7 +180,9 @@ func (is *Is) OneOf(a interface{}, b ...interface{}) {
 		fail(is, "expected object '%s' to be equal to one of '%s', but got: %v and %v",
 			objectTypeName(a),
 			objectTypeNames(b), a, b)
+		return false
 	}
+	return true
 }
 
 // NotOneOf performs a deep compare of the provided object and an array of
@@ -186,7 +192,7 @@ func (is *Is) OneOf(a interface{}, b ...interface{}) {
 // NotOneOf does not respect type differences. If the types are different and
 // comparable (eg int32 and int64), they will be compared as though they are
 // the same type.
-func (is *Is) NotOneOf(a interface{}, b ...interface{}) {
+func (is *Is) NotOneOf(a interface{}, b ...interface{}) bool {
 	is.TB.Helper()
 	result := false
 	for _, o := range b {
@@ -199,15 +205,19 @@ func (is *Is) NotOneOf(a interface{}, b ...interface{}) {
 		fail(is, "expected object '%s' not to be equal to one of '%s', but got: %v and %v",
 			objectTypeName(a),
 			objectTypeNames(b), a, b)
+		return false
 	}
+	return true
 }
 
 // Err checks the provided error object to determine if an error is present.
-func (is *Is) Err(e error) {
+func (is *Is) Err(e error) bool {
 	is.TB.Helper()
 	if isNil(e) {
 		fail(is, "expected error")
+		return false
 	}
+	return true
 }
 
 // ErrMsg checks the provided error object to determine if error message matches the expected string
@@ -222,43 +232,53 @@ func (is *Is) ErrMsg(e error, expectedMsg string) {
 
 // NotErr checks the provided error object to determine if an error is not
 // present.
-func (is *Is) NotErr(e error) {
+func (is *Is) NotErr(e error) bool {
 	is.TB.Helper()
 	if !isNil(e) {
 		fail(is, "expected no error, but got: %v", e)
+		return false
 	}
+	return true
 }
 
 // Nil checks the provided object to determine if it is nil.
-func (is *Is) Nil(o interface{}) {
+func (is *Is) Nil(o interface{}) bool {
 	is.TB.Helper()
 	if !isNil(o) {
 		fail(is, "expected object '%s' to be nil, but got: %v", objectTypeName(o), o)
+		return false
 	}
+	return true
 }
 
 // NotNil checks the provided object to determine if it is not nil.
-func (is *Is) NotNil(o interface{}) {
+func (is *Is) NotNil(o interface{}) bool {
 	is.TB.Helper()
 	if isNil(o) {
 		fail(is, "expected object '%s' not to be nil", objectTypeName(o))
+		return false
 	}
+	return true
 }
 
 // True checks the provided boolean to determine if it is true.
-func (is *Is) True(b bool) {
+func (is *Is) True(b bool) bool {
 	is.TB.Helper()
 	if !b {
 		fail(is, "expected boolean to be true")
+		return false
 	}
+	return true
 }
 
 // False checks the provided boolean to determine if is false.
-func (is *Is) False(b bool) {
+func (is *Is) False(b bool) bool {
 	is.TB.Helper()
 	if b {
 		fail(is, "expected boolean to be false")
+		return false
 	}
+	return true
 }
 
 // Zero checks the provided object to determine if it is the zero value
@@ -271,11 +291,13 @@ func (is *Is) False(b bool) {
 //
 // In cases such as slice, map, array and chan, a nil value is treated the
 // same as an object with len == 0
-func (is *Is) Zero(o interface{}) {
+func (is *Is) Zero(o interface{}) bool {
 	is.TB.Helper()
 	if !isZero(o) {
 		fail(is, "expected object '%s' to be zero value, but it was: %v", objectTypeName(o), o)
+		return false
 	}
+	return true
 }
 
 // NotZero checks the provided object to determine if it is not the zero
@@ -288,18 +310,20 @@ func (is *Is) Zero(o interface{}) {
 //
 // In cases such as slice, map, array and chan, a nil value is treated the
 // same as an object with len == 0
-func (is *Is) NotZero(o interface{}) {
+func (is *Is) NotZero(o interface{}) bool {
 	is.TB.Helper()
 	if isZero(o) {
 		fail(is, "expected object '%s' not to be zero value", objectTypeName(o))
+		return false
 	}
+	return true
 }
 
 // Len checks the provided object to determine if it is the same length as the
 // provided length argument.
 //
 // If the object is not one of type array, slice or map, it will fail.
-func (is *Is) Len(o interface{}, l int) {
+func (is *Is) Len(o interface{}, l int) bool {
 	is.TB.Helper()
 	t := reflect.TypeOf(o)
 	if o == nil ||
@@ -307,13 +331,15 @@ func (is *Is) Len(o interface{}, l int) {
 			t.Kind() != reflect.Slice &&
 			t.Kind() != reflect.Map) {
 		fail(is, "expected object '%s' to be of length '%d', but the object is not one of array, slice or map", objectTypeName(o), l)
-		return
+		return false
 	}
 
 	rLen := reflect.ValueOf(o).Len()
 	if rLen != l {
 		fail(is, "expected object '%s' to be of length '%d' but it was: %d", objectTypeName(o), l, rLen)
+		return false
 	}
+	return true
 }
 
 // ShouldPanic expects the provided function to panic. If the function does
@@ -331,11 +357,13 @@ func (is *Is) ShouldPanic(f func()) {
 
 // EqualType checks the type of the two provided objects and
 // fails if they are not the same.
-func (is *Is) EqualType(expected, actual interface{}) {
+func (is *Is) EqualType(expected, actual interface{}) bool {
 	is.TB.Helper()
 	if reflect.TypeOf(expected) != reflect.TypeOf(actual) {
 		fail(is, "expected objects '%s' to be of the same type as object '%s'", objectTypeName(expected), objectTypeName(actual))
+		return false
 	}
+	return true
 }
 
 // WaitForTrue waits until the provided func returns true. If the timeout is
