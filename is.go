@@ -2,7 +2,6 @@ package is
 
 import (
 	"fmt"
-	"log"
 	"reflect"
 	"testing"
 	"time"
@@ -33,7 +32,7 @@ type Is struct {
 // provided testing object.
 func New(tb testing.TB) *Is {
 	if tb == nil {
-		log.Fatalln("You must provide a testing object.")
+		panic("You must provide a testing object.")
 	}
 	return &Is{TB: tb, strict: true}
 }
