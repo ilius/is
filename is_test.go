@@ -88,8 +88,16 @@ var tests = []struct {
 	},
 }
 
+func TestNewPanic(t *testing.T) {
+	is := New(t)
+	is.ShouldPanic(func() {
+		New(nil)
+	})
+}
+
 func TestIs(t *testing.T) {
 	is := New(t)
+	is = is.New(t)
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
@@ -150,6 +158,7 @@ func TestIs(t *testing.T) {
 	is.Nil((*testStruct)(nil))
 	is.OneOf(1, 2, 3, 1)
 	is.NotOneOf(1, 2, 3)
+	is.EqualType(1, 2)
 
 	lens := []interface{}{
 		[]int{1, 2, 3},
@@ -187,16 +196,61 @@ func TestIsMsg(t *testing.T) {
 
 	is = is.AddMsg("another %s %s", "couple", "things")
 	if is.failFormat != "something %s - another %s %s" {
-		t.Fatal("failFormat not set")
+		t.Fatal("AddMsg did not work")
 	}
-	if is.failArgs[0].(string) != "else" {
+	is = is.PrependMsg("#%d message", 1)
+	if is.failFormat != "#%d message - something %s - another %s %s" {
+		t.Fatal("PrependMsg did not work")
+	}
+	if is.failArgs[0].(int) != 1 {
 		t.Fatal("failArgs not set")
 	}
-	if is.failArgs[1].(string) != "couple" {
+	if is.failArgs[1].(string) != "else" {
 		t.Fatal("failArgs not set")
 	}
-	if is.failArgs[2].(string) != "things" {
+	if is.failArgs[2].(string) != "couple" {
 		t.Fatal("failArgs not set")
+	}
+	if is.failArgs[3].(string) != "things" {
+		t.Fatal("failArgs not set")
+	}
+}
+
+func TestIsAddMsg(t *testing.T) {
+	is := New(t)
+	is = is.AddMsg("something %s %s", "new", "here")
+	if is.failFormat != "something %s %s" {
+		t.Fatal("AddMsg: bad failFormat")
+	}
+	if is.failArgs[0].(string) != "new" {
+		t.Fatal("AddMsg: bad failArgs[0]")
+	}
+	if is.failArgs[1].(string) != "here" {
+		t.Fatal("AddMsg: bad failArgs[1]")
+	}
+}
+
+func TestIsPrependMsg(t *testing.T) {
+	is := New(t)
+	is = is.PrependMsg("something %s %s", "new", "here")
+	if is.failFormat != "something %s %s" {
+		t.Fatal("PrependMsg: bad failFormat")
+	}
+	if is.failArgs[0].(string) != "new" {
+		t.Fatal("PrependMsg: bad failArgs[0]")
+	}
+	if is.failArgs[1].(string) != "here" {
+		t.Fatal("PrependMsg: bad failArgs[1]")
+	}
+}
+
+func TestIsMsgSep(t *testing.T) {
+	is := New(t)
+	is = is.MsgSep(", ")
+	is = is.AddMsg("msg one")
+	is = is.AddMsg("msg two")
+	if is.failFormat != "msg one, msg two" {
+		t.Fatal("bad failFormat")
 	}
 }
 
@@ -245,6 +299,7 @@ func TestIsFailures(t *testing.T) {
 
 	is.NotEqual(1, 1)
 	is.Err(nil)
+	is.ErrMsg(errors.New("error 1"), "error 2")
 	is.NotErr(errors.New("error"))
 	is.Nil(&hit)
 	is.NotNil(nil)
@@ -257,7 +312,7 @@ func TestIsFailures(t *testing.T) {
 	is.ShouldPanic(func() {})
 
 	fail = failDefault
-	is.Strict().Equal(hit, 12)
+	is.Strict().Equal(hit, 13)
 }
 
 func TestWaitForTrue(t *testing.T) {
