@@ -176,7 +176,7 @@ func (is *Is) OneOf(a interface{}, b ...interface{}) bool {
 		}
 	}
 	if !result {
-		fail(is, "expected object '%s' to be equal to one of '%s', but got: %v and %v",
+		fail(is, "expected object '%s' to be equal to one of '%s', but got: %#v and %#v",
 			objectTypeName(a),
 			objectTypeNames(b), a, b)
 		return false
