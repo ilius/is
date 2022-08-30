@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/google/go-cmp/cmp"
+	"github.com/ilius/go-cmp/cmp"
 )
 
 func objectTypeName(o interface{}) string {
