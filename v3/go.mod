@@ -1,4 +1,4 @@
-module github.com/ilius/is
+module github.com/ilius/is/v3
 
 go 1.13
 
