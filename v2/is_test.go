@@ -289,6 +289,23 @@ func TestIsOneOf(t *testing.T) {
 	is.Strict().Equal(hit, 2)
 }
 
+func TestContains(t *testing.T) {
+	is := New(t)
+
+	hit := 0
+	fail = func(is *Is, format string, args ...interface{}) {
+		hit++
+	}
+
+	is.True(is.Contains("hello", "ell"))
+	is.True(is.Contains([]string{"hello", "world"}, "hello"))
+	is.False(is.Contains("hello", "elf"))
+	is.False(is.Contains([]string{"hello", "world"}, "test"))
+
+	fail = failDefault
+	is.Strict().Equal(hit, 2)
+}
+
 func TestIsFailures(t *testing.T) {
 	is := New(t)
 

@@ -3,6 +3,7 @@ package is
 import (
 	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 )
@@ -209,6 +210,38 @@ func (is *Is) NotOneOf(a interface{}, b ...interface{}) bool {
 		return false
 	}
 	return true
+}
+
+func isString(a interface{}) bool {
+	return reflect.TypeOf(a).Kind() == reflect.String
+}
+
+func isSlice(a interface{}) bool {
+	return reflect.TypeOf(a).Kind() == reflect.Slice
+}
+
+func (is *Is) Contains(a interface{}, b interface{}) bool {
+	if isString(a) && isString(b) {
+		astr := reflect.ValueOf(a).String()
+		bstr := reflect.ValueOf(b).String()
+		if strings.Contains(astr, bstr) {
+			return true
+		}
+		fail(is, "%#v expected to contain %#v", a, b)
+		return false
+	}
+	if isSlice(a) {
+		alist := reflect.ValueOf(a)
+		for i := 0; i < alist.Len(); i++ {
+			if isEqual(alist.Index(i).Interface(), b) {
+				return true
+			}
+		}
+		fail(is, "%#v expected to contain %#v", a, b)
+		return false
+	}
+	fail(is, "unexpected argument types %T and %T", a, b)
+	return false
 }
 
 // Err checks the provided error object to determine if an error is present.
