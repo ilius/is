@@ -43,7 +43,9 @@ func New(tb testing.TB) *Is {
 // Strict mode.
 //
 // For example, creating your initial instance as such
-//  is := is.New(t)
+//
+//	is := is.New(t)
+//
 // is the convention, but this obviously shadows the `is` package namespace.
 // Inside your subtest, you can do the exact same thing to initialize a locally scoped
 // variable that uses the subtest's testing.T object.
@@ -220,13 +222,13 @@ func (is *Is) Err(e error) bool {
 }
 
 // ErrMsg checks the provided error object to determine if error message matches the expected string
-func (is *Is) ErrMsg(e error, expectedMsg string) {
+func (is *Is) ErrMsg(e error, expectedMsg string) bool {
 	is.TB.Helper()
 	if isNil(e) {
 		fail(is, "expected error %#v", expectedMsg)
-	} else {
-		is.Equal(e.Error(), expectedMsg)
+		return false
 	}
+	return is.Equal(e.Error(), expectedMsg)
 }
 
 // NotErr checks the provided error object to determine if an error is not
