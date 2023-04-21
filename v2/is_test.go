@@ -4,9 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"time"
-
 	"testing"
+	"time"
 )
 
 var numberTypes = []reflect.Type{
@@ -408,5 +407,4 @@ func TestEqualer(t *testing.T) {
 	if hit != 2 {
 		t.Fatalf("fail func should have been called 2 times, but was called %d times", hit)
 	}
-
 }
