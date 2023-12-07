@@ -101,7 +101,7 @@ func TestIs(t *testing.T) {
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
 			fail = func(is *Is, format string, args ...interface{}) {
-				fmt.Print(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...))
+				fmt.Printf(fmt.Sprintf("(test #%d) - ", i)+format, args...)
 				t.FailNow()
 			}
 			is.Equal(test.a, reflect.ValueOf(test.b).Convert(cType).Interface())
@@ -112,7 +112,7 @@ func TestIs(t *testing.T) {
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
 			fail = func(is *Is, format string, args ...interface{}) {
-				fmt.Print(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...))
+				fmt.Printf(fmt.Sprintf("(test #%d) - ", i)+format, args...)
 				t.FailNow()
 			}
 			is.NotEqual(test.a, reflect.ValueOf(test.c).Convert(cType).Interface())
@@ -123,7 +123,7 @@ func TestIs(t *testing.T) {
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
 			fail = func(is *Is, format string, args ...interface{}) {
-				fmt.Print(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...))
+				fmt.Printf(fmt.Sprintf("(test #%d) - ", i)+format, args...)
 				t.FailNow()
 			}
 			is.Zero(reflect.ValueOf(test.d).Convert(cType).Interface())
@@ -134,7 +134,7 @@ func TestIs(t *testing.T) {
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
 			fail = func(is *Is, format string, args ...interface{}) {
-				fmt.Print(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...))
+				fmt.Printf(fmt.Sprintf("(test #%d) - ", i)+format, args...)
 				t.FailNow()
 			}
 			is.NotZero(reflect.ValueOf(test.e).Convert(cType).Interface())
@@ -143,7 +143,7 @@ func TestIs(t *testing.T) {
 	}
 
 	fail = func(is *Is, format string, args ...interface{}) {
-		fmt.Print(fmt.Sprintf(format, args...))
+		fmt.Printf(format, args...)
 		t.FailNow()
 	}
 	is.Nil(nil)
@@ -174,7 +174,7 @@ func TestIs(t *testing.T) {
 	is.Equal((*testStruct)(nil), (*testStruct)(nil))
 
 	fail = func(is *Is, format string, args ...interface{}) {
-		fmt.Print(fmt.Sprintf(format, args...))
+		fmt.Printf(format, args...)
 		t.FailNow()
 	}
 	is.ShouldPanic(func() {

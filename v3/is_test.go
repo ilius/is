@@ -93,7 +93,7 @@ func Test(t *testing.T) {
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
 			fail = func(is *asserter, format string, args ...interface{}) {
-				fmt.Print(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...))
+				fmt.Printf(fmt.Sprintf("(test #%d) - ", i)+format, args...)
 				t.FailNow()
 			}
 			assert.Equal(test.a, reflect.ValueOf(test.b).Convert(cType).Interface())
@@ -104,7 +104,7 @@ func Test(t *testing.T) {
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
 			fail = func(is *asserter, format string, args ...interface{}) {
-				fmt.Print(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...))
+				fmt.Printf(fmt.Sprintf("(test #%d) - ", i)+format, args...)
 				t.FailNow()
 			}
 			assert.NotEqual(test.a, reflect.ValueOf(test.c).Convert(cType).Interface())
@@ -115,7 +115,7 @@ func Test(t *testing.T) {
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
 			fail = func(is *asserter, format string, args ...interface{}) {
-				fmt.Print(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...))
+				fmt.Printf(fmt.Sprintf("(test #%d) - ", i)+format, args...)
 				t.FailNow()
 			}
 			assert.Zero(reflect.ValueOf(test.d).Convert(cType).Interface())
@@ -126,7 +126,7 @@ func Test(t *testing.T) {
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
 			fail = func(is *asserter, format string, args ...interface{}) {
-				fmt.Print(fmt.Sprintf(fmt.Sprintf("(test #%d) - ", i)+format, args...))
+				fmt.Printf(fmt.Sprintf("(test #%d) - ", i)+format, args...)
 				t.FailNow()
 			}
 			assert.NotZero(reflect.ValueOf(test.e).Convert(cType).Interface())
@@ -135,7 +135,7 @@ func Test(t *testing.T) {
 	}
 
 	fail = func(is *asserter, format string, args ...interface{}) {
-		fmt.Print(fmt.Sprintf(format, args...))
+		fmt.Printf(format, args...)
 		t.FailNow()
 	}
 	assert.Nil(nil)
@@ -164,7 +164,7 @@ func Test(t *testing.T) {
 	assert.Equal((*testStruct)(nil), (*testStruct)(nil))
 
 	fail = func(is *asserter, format string, args ...interface{}) {
-		fmt.Print(fmt.Sprintf(format, args...))
+		fmt.Printf(format, args...)
 		t.FailNow()
 	}
 	assert.ShouldPanic(func() {

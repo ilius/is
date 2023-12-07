@@ -135,10 +135,7 @@ func diff(actual interface{}, expected interface{}) string {
 			return false
 		}
 		err = json.Unmarshal(bytes, &dest)
-		if err != nil {
-			return false
-		}
-		return true
+		return err == nil
 	}
 	var s string
 	switch aKind {
