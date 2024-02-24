@@ -16,7 +16,7 @@ import (
 //
 // Deprecated
 type Equaler interface {
-	Equal(in interface{}) bool
+	Equal(in any) bool
 }
 
 // EqualityChecker is used to define equality for types during testing.
@@ -25,7 +25,7 @@ type Equaler interface {
 // fields. You can implement this method and use time.Time.Equal() to do the
 // comparison.
 type EqualityChecker interface {
-	IsEqual(in interface{}) bool
+	IsEqual(in any) bool
 }
 
 // Asserter provides methods that leverage the existing testing capabilities found
@@ -39,7 +39,7 @@ type Asserter interface {
 
 	// Msg defines a message to print in the event of a failure. This allows you
 	// to print out additional information about a failure if it happens.
-	Msg(format string, args ...interface{}) Asserter
+	Msg(format string, args ...any) Asserter
 
 	// AddMsg appends a message to print in the event of a failure. This allows
 	// you to build a failure message in multiple steps. If no message was
@@ -52,7 +52,7 @@ type Asserter interface {
 	// assert := is.New(t).Msg("User ID: %d",u.ID)
 	// /*do things*/
 	// assert.AddMsg("Raw Response: %s",body).Equal(res.StatusCode, http.StatusCreated)
-	AddMsg(format string, args ...interface{}) Asserter
+	AddMsg(format string, args ...any) Asserter
 
 	// Equal performs a deep compare of the provided objects and fails if they are
 	// not equal.
@@ -60,7 +60,7 @@ type Asserter interface {
 	// Equal does not respect type differences. If the types are different and
 	// comparable (eg int32 and int64), they will be compared as though they are
 	// the same type.
-	Equal(actual interface{}, expected interface{})
+	Equal(actual any, expected any)
 
 	// NotEqual performs a deep compare of the provided objects and fails if they are
 	// equal.
@@ -68,7 +68,7 @@ type Asserter interface {
 	// NotEqual does not respect type differences. If the types are different and
 	// comparable (eg int32 and int64), they will be compared as though they are
 	// the same type.
-	NotEqual(a interface{}, b interface{})
+	NotEqual(a any, b any)
 
 	// OneOf performs a deep compare of the provided object and an array of
 	// comparison objects. It fails if the first object is not equal to one of the
@@ -77,7 +77,7 @@ type Asserter interface {
 	// OneOf does not respect type differences. If the types are different and
 	// comparable (eg int32 and int64), they will be compared as though they are
 	// the same type.
-	OneOf(a interface{}, b ...interface{})
+	OneOf(a any, b ...any)
 
 	// NotOneOf performs a deep compare of the provided object and an array of
 	// comparison objects. It fails if the first object is equal to one of the
@@ -86,7 +86,7 @@ type Asserter interface {
 	// NotOneOf does not respect type differences. If the types are different and
 	// comparable (eg int32 and int64), they will be compared as though they are
 	// the same type.
-	NotOneOf(a interface{}, b ...interface{})
+	NotOneOf(a any, b ...any)
 
 	// Err checks the provided error object to determine if an error is present.
 	Err(e error)
@@ -96,10 +96,10 @@ type Asserter interface {
 	NotErr(e error)
 
 	// Nil checks the provided object to determine if it is nil.
-	Nil(o interface{})
+	Nil(o any)
 
 	// NotNil checks the provided object to determine if it is not nil.
-	NotNil(o interface{})
+	NotNil(o any)
 
 	// True checks the provided boolean to determine if it is true.
 	True(b bool)
@@ -117,7 +117,7 @@ type Asserter interface {
 	//
 	// In cases such as slice, map, array and chan, a nil value is treated the
 	// same as an object with len == 0
-	Zero(o interface{})
+	Zero(o any)
 
 	// NotZero checks the provided object to determine if it is not the zero
 	// value for the type of that object. The zero value is the same as what the
@@ -129,13 +129,13 @@ type Asserter interface {
 	//
 	// In cases such as slice, map, array and chan, a nil value is treated the
 	// same as an object with len == 0
-	NotZero(o interface{})
+	NotZero(o any)
 
 	// Len checks the provided object to determine if it is the same length as the
 	// provided length argument.
 	//
 	// If the object is not one of type array, slice or map, it will fail.
-	Len(o interface{}, l int)
+	Len(o any, l int)
 
 	// ShouldPanic expects the provided function to panic. If the function does
 	// not panic, this assertion fails.
@@ -143,7 +143,7 @@ type Asserter interface {
 
 	// EqualType checks the type of the two provided objects and
 	// fails if they are not the same.
-	EqualType(expected, actual interface{})
+	EqualType(expected, actual any)
 
 	// WaitForTrue waits until the provided func returns true. If the timeout is
 	// reached before the function returns true, the test will fail.
@@ -163,7 +163,7 @@ type asserter struct {
 	tb         testing.TB
 	strict     bool
 	failFormat string
-	failArgs   []interface{}
+	failArgs   []any
 	failed     bool
 }
 
@@ -183,7 +183,7 @@ func (self *asserter) TB() testing.TB {
 
 // Msg defines a message to print in the event of a failure. This allows you
 // to print out additional information about a failure if it happens.
-func (self *asserter) Msg(format string, args ...interface{}) Asserter {
+func (self *asserter) Msg(format string, args ...any) Asserter {
 	return &asserter{
 		tb:         self.tb,
 		strict:     self.strict,
@@ -192,7 +192,7 @@ func (self *asserter) Msg(format string, args ...interface{}) Asserter {
 	}
 }
 
-func (self *asserter) AddMsg(format string, args ...interface{}) Asserter {
+func (self *asserter) AddMsg(format string, args ...any) Asserter {
 	if self.failFormat == "" {
 		return self.Msg(format, args...)
 	}
@@ -204,7 +204,7 @@ func (self *asserter) AddMsg(format string, args ...interface{}) Asserter {
 	}
 }
 
-func (self *asserter) Equal(actual interface{}, expected interface{}) {
+func (self *asserter) Equal(actual any, expected any) {
 	self.tb.Helper()
 	if !isEqual(actual, expected) {
 		fail(self, "actual value '%v' (%s) should be equal to expected value '%v' (%s)%s",
@@ -215,7 +215,7 @@ func (self *asserter) Equal(actual interface{}, expected interface{}) {
 	}
 }
 
-func (self *asserter) NotEqual(actual interface{}, expected interface{}) {
+func (self *asserter) NotEqual(actual any, expected any) {
 	self.tb.Helper()
 	if isEqual(actual, expected) {
 		fail(self, "actual value '%v' (%s) should not be equal to expected value '%v' (%s)",
@@ -224,7 +224,7 @@ func (self *asserter) NotEqual(actual interface{}, expected interface{}) {
 	}
 }
 
-func (self *asserter) OneOf(a interface{}, b ...interface{}) {
+func (self *asserter) OneOf(a any, b ...any) {
 	self.tb.Helper()
 	result := false
 	for _, o := range b {
@@ -240,7 +240,7 @@ func (self *asserter) OneOf(a interface{}, b ...interface{}) {
 	}
 }
 
-func (self *asserter) NotOneOf(a interface{}, b ...interface{}) {
+func (self *asserter) NotOneOf(a any, b ...any) {
 	self.tb.Helper()
 	result := false
 	for _, o := range b {
@@ -270,14 +270,14 @@ func (self *asserter) NotErr(err error) {
 	}
 }
 
-func (self *asserter) Nil(o interface{}) {
+func (self *asserter) Nil(o any) {
 	self.tb.Helper()
 	if !isNil(o) {
 		fail(self, "expected object '%s' to be nil, but got: %v", objectTypeName(o), o)
 	}
 }
 
-func (self *asserter) NotNil(o interface{}) {
+func (self *asserter) NotNil(o any) {
 	self.tb.Helper()
 	if isNil(o) {
 		fail(self, "expected object '%s' not to be nil", objectTypeName(o))
@@ -298,21 +298,21 @@ func (self *asserter) False(b bool) {
 	}
 }
 
-func (self *asserter) Zero(o interface{}) {
+func (self *asserter) Zero(o any) {
 	self.tb.Helper()
 	if !isZero(o) {
 		fail(self, "expected object '%s' to be zero value, but it was: %v", objectTypeName(o), o)
 	}
 }
 
-func (self *asserter) NotZero(o interface{}) {
+func (self *asserter) NotZero(o any) {
 	self.tb.Helper()
 	if isZero(o) {
 		fail(self, "expected object '%s' not to be zero value", objectTypeName(o))
 	}
 }
 
-func (self *asserter) Len(obj interface{}, length int) {
+func (self *asserter) Len(obj any, length int) {
 	self.tb.Helper()
 	t := reflect.TypeOf(obj)
 	if obj == nil ||
@@ -340,7 +340,7 @@ func (self *asserter) ShouldPanic(fn func()) {
 	fn()
 }
 
-func (self *asserter) EqualType(expected, actual interface{}) {
+func (self *asserter) EqualType(expected, actual any) {
 	self.tb.Helper()
 	if reflect.TypeOf(expected) != reflect.TypeOf(actual) {
 		fail(self, "expected objects '%s' to be of the same type as object '%s'", objectTypeName(expected), objectTypeName(actual))

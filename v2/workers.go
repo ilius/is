@@ -6,11 +6,11 @@ import (
 	"reflect"
 )
 
-func objectTypeName(o interface{}) string {
+func objectTypeName(o any) string {
 	return fmt.Sprintf("%T", o)
 }
 
-func objectTypeNames(o []interface{}) string {
+func objectTypeNames(o []any) string {
 	if o == nil {
 		return objectTypeName(o)
 	}
@@ -26,7 +26,7 @@ func objectTypeNames(o []interface{}) string {
 	return b.String()
 }
 
-func isNil(o interface{}) bool {
+func isNil(o any) bool {
 	if o == nil {
 		return true
 	}
@@ -40,7 +40,7 @@ func isNil(o interface{}) bool {
 	return false
 }
 
-func isZero(o interface{}) bool {
+func isZero(o any) bool {
 	if o == nil {
 		return true
 	}
@@ -60,7 +60,7 @@ func isZero(o interface{}) bool {
 	}
 }
 
-func isEqual(a interface{}, b interface{}) bool {
+func isEqual(a any, b any) bool {
 	if isNil(a) || isNil(b) {
 		if isNil(a) && !isNil(b) {
 			return false
@@ -95,7 +95,7 @@ func isEqual(a interface{}, b interface{}) bool {
 var fail = failDefault
 
 // failDefault is the default failure function.
-func failDefault(is *Is, format string, args ...interface{}) {
+func failDefault(is *Is, format string, args ...any) {
 	is.TB.Helper()
 
 	failFmt := format

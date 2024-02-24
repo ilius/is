@@ -14,7 +14,7 @@ import (
 // fields. You can implement this method and use time.Time.Equal() to do the
 // comparison.
 type Equaler interface {
-	Equal(in interface{}) bool
+	Equal(in any) bool
 }
 
 // Is provides methods that leverage the existing testing capabilities found
@@ -25,7 +25,7 @@ type Is struct {
 	TB         testing.TB
 	strict     bool
 	failFormat string
-	failArgs   []interface{}
+	failArgs   []any
 	msgSep     string
 }
 
@@ -58,7 +58,7 @@ func (is *Is) New(tb testing.TB) *Is {
 
 // Msg defines a message to print in the event of a failure. This allows you
 // to print out additional information about a failure if it happens.
-func (is *Is) Msg(format string, args ...interface{}) *Is {
+func (is *Is) Msg(format string, args ...any) *Is {
 	newIs := *is
 	newIs.failFormat = format
 	newIs.failArgs = args
@@ -89,7 +89,7 @@ func (is *Is) getMsgSep() string {
 // is := is.New(t).Msg("User ID: %d",u.ID)
 // /*do things*/
 // is.AddMsg("Raw Response: %s",body).Equal(res.StatusCode, http.StatusCreated)
-func (is *Is) AddMsg(format string, args ...interface{}) *Is {
+func (is *Is) AddMsg(format string, args ...any) *Is {
 	if is.failFormat == "" {
 		return is.Msg(format, args...)
 	}
@@ -100,7 +100,7 @@ func (is *Is) AddMsg(format string, args ...interface{}) *Is {
 }
 
 // PrependMsg is like AddMsg, but it adds the message before currently added messages
-func (is *Is) PrependMsg(format string, args ...interface{}) *Is {
+func (is *Is) PrependMsg(format string, args ...any) *Is {
 	if is.failFormat == "" {
 		return is.Msg(format, args...)
 	}
@@ -134,7 +134,7 @@ func (is *Is) Strict() *Is {
 // Equal does not respect type differences. If the types are different and
 // comparable (eg int32 and int64), they will be compared as though they are
 // the same type.
-func (is *Is) Equal(actual interface{}, expected interface{}) bool {
+func (is *Is) Equal(actual any, expected any) bool {
 	is.TB.Helper()
 	if !isEqual(actual, expected) {
 		fail(is, "got '%v' (%s). expected '%v' (%s)",
@@ -151,7 +151,7 @@ func (is *Is) Equal(actual interface{}, expected interface{}) bool {
 // NotEqual does not respect type differences. If the types are different and
 // comparable (eg int32 and int64), they will be compared as though they are
 // the same type.
-func (is *Is) NotEqual(a interface{}, b interface{}) bool {
+func (is *Is) NotEqual(a any, b any) bool {
 	is.TB.Helper()
 	if isEqual(a, b) {
 		fail(is, "expected objects '%s' and '%s' not to be equal",
@@ -169,7 +169,7 @@ func (is *Is) NotEqual(a interface{}, b interface{}) bool {
 // OneOf does not respect type differences. If the types are different and
 // comparable (eg int32 and int64), they will be compared as though they are
 // the same type.
-func (is *Is) OneOf(a interface{}, b ...interface{}) bool {
+func (is *Is) OneOf(a any, b ...any) bool {
 	is.TB.Helper()
 	result := false
 	for _, o := range b {
@@ -194,7 +194,7 @@ func (is *Is) OneOf(a interface{}, b ...interface{}) bool {
 // NotOneOf does not respect type differences. If the types are different and
 // comparable (eg int32 and int64), they will be compared as though they are
 // the same type.
-func (is *Is) NotOneOf(a interface{}, b ...interface{}) bool {
+func (is *Is) NotOneOf(a any, b ...any) bool {
 	is.TB.Helper()
 	result := false
 	for _, o := range b {
@@ -212,15 +212,15 @@ func (is *Is) NotOneOf(a interface{}, b ...interface{}) bool {
 	return true
 }
 
-func isString(a interface{}) bool {
+func isString(a any) bool {
 	return reflect.TypeOf(a).Kind() == reflect.String
 }
 
-func isSlice(a interface{}) bool {
+func isSlice(a any) bool {
 	return reflect.TypeOf(a).Kind() == reflect.Slice
 }
 
-func (is *Is) Contains(a interface{}, b interface{}) bool {
+func (is *Is) Contains(a any, b any) bool {
 	if isString(a) && isString(b) {
 		astr := reflect.ValueOf(a).String()
 		bstr := reflect.ValueOf(b).String()
@@ -276,7 +276,7 @@ func (is *Is) NotErr(e error) bool {
 }
 
 // Nil checks the provided object to determine if it is nil.
-func (is *Is) Nil(o interface{}) bool {
+func (is *Is) Nil(o any) bool {
 	is.TB.Helper()
 	if !isNil(o) {
 		fail(is, "expected object '%s' to be nil, but got: %v", objectTypeName(o), o)
@@ -286,7 +286,7 @@ func (is *Is) Nil(o interface{}) bool {
 }
 
 // NotNil checks the provided object to determine if it is not nil.
-func (is *Is) NotNil(o interface{}) bool {
+func (is *Is) NotNil(o any) bool {
 	is.TB.Helper()
 	if isNil(o) {
 		fail(is, "expected object '%s' not to be nil", objectTypeName(o))
@@ -325,7 +325,7 @@ func (is *Is) False(b bool) bool {
 //
 // In cases such as slice, map, array and chan, a nil value is treated the
 // same as an object with len == 0
-func (is *Is) Zero(o interface{}) bool {
+func (is *Is) Zero(o any) bool {
 	is.TB.Helper()
 	if !isZero(o) {
 		fail(is, "expected object '%s' to be zero value, but it was: %v", objectTypeName(o), o)
@@ -344,7 +344,7 @@ func (is *Is) Zero(o interface{}) bool {
 //
 // In cases such as slice, map, array and chan, a nil value is treated the
 // same as an object with len == 0
-func (is *Is) NotZero(o interface{}) bool {
+func (is *Is) NotZero(o any) bool {
 	is.TB.Helper()
 	if isZero(o) {
 		fail(is, "expected object '%s' not to be zero value", objectTypeName(o))
@@ -357,7 +357,7 @@ func (is *Is) NotZero(o interface{}) bool {
 // provided length argument.
 //
 // If the object is not one of type array, slice or map, it will fail.
-func (is *Is) Len(o interface{}, l int) bool {
+func (is *Is) Len(o any, l int) bool {
 	is.TB.Helper()
 	t := reflect.TypeOf(o)
 	if o == nil ||
@@ -391,7 +391,7 @@ func (is *Is) ShouldPanic(f func()) {
 
 // EqualType checks the type of the two provided objects and
 // fails if they are not the same.
-func (is *Is) EqualType(expected, actual interface{}) bool {
+func (is *Is) EqualType(expected, actual any) bool {
 	is.TB.Helper()
 	if reflect.TypeOf(expected) != reflect.TypeOf(actual) {
 		fail(is, "expected objects '%s' to be of the same type as object '%s'", objectTypeName(expected), objectTypeName(actual))

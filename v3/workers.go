@@ -9,11 +9,11 @@ import (
 	"github.com/ilius/go-cmp/cmp"
 )
 
-func objectTypeName(o interface{}) string {
+func objectTypeName(o any) string {
 	return fmt.Sprintf("%T", o)
 }
 
-func objectTypeNames(o []interface{}) string {
+func objectTypeNames(o []any) string {
 	if o == nil {
 		return objectTypeName(o)
 	}
@@ -29,7 +29,7 @@ func objectTypeNames(o []interface{}) string {
 	return b.String()
 }
 
-func isNil(o interface{}) bool {
+func isNil(o any) bool {
 	if o == nil {
 		return true
 	}
@@ -43,7 +43,7 @@ func isNil(o interface{}) bool {
 	return false
 }
 
-func isZero(o interface{}) bool {
+func isZero(o any) bool {
 	if o == nil {
 		return true
 	}
@@ -63,7 +63,7 @@ func isZero(o interface{}) bool {
 	}
 }
 
-func isEqual(a interface{}, b interface{}) bool {
+func isEqual(a any, b any) bool {
 	if isNil(a) || isNil(b) {
 		if isNil(a) && !isNil(b) {
 			return false
@@ -103,7 +103,7 @@ func isEqual(a interface{}, b interface{}) bool {
 var fail = failDefault
 
 // failDefault is the default failure function.
-func failDefault(is *asserter, format string, args ...interface{}) {
+func failDefault(is *asserter, format string, args ...any) {
 	is.tb.Helper()
 
 	is.failed = true
@@ -120,7 +120,7 @@ func failDefault(is *asserter, format string, args ...interface{}) {
 	}
 }
 
-func diff(actual interface{}, expected interface{}) string {
+func diff(actual any, expected any) string {
 	aKind := reflect.TypeOf(actual).Kind()
 	eKind := reflect.TypeOf(expected).Kind()
 	if aKind != eKind {
@@ -129,7 +129,7 @@ func diff(actual interface{}, expected interface{}) string {
 	if aKind != reflect.Slice && aKind != reflect.Map {
 		return ""
 	}
-	f := func(src, dest interface{}) bool {
+	f := func(src, dest any) bool {
 		bytes, err := json.Marshal(src)
 		if err != nil {
 			return false
@@ -140,8 +140,8 @@ func diff(actual interface{}, expected interface{}) string {
 	var s string
 	switch aKind {
 	case reflect.Slice:
-		var aSlice []interface{}
-		var eSlice []interface{}
+		var aSlice []any
+		var eSlice []any
 		if !f(actual, &aSlice) {
 			return ""
 		}
@@ -150,8 +150,8 @@ func diff(actual interface{}, expected interface{}) string {
 		}
 		s = cmp.Diff(aSlice, eSlice)
 	case reflect.Map:
-		var aMap map[interface{}]interface{}
-		var eMap map[interface{}]interface{}
+		var aMap map[any]any
+		var eMap map[any]any
 		if !f(actual, &aMap) {
 			return ""
 		}
