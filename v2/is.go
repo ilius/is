@@ -400,6 +400,15 @@ func (is *Is) EqualType(expected, actual any) bool {
 	return true
 }
 
+func (is *Is) IsType(expectedType reflect.Type, actual any) bool {
+	is.TB.Helper()
+	if expectedType != reflect.TypeOf(actual) {
+		fail(is, "expected objects '%s' to be of the same type as object '%s'", expectedType, objectTypeName(actual))
+		return false
+	}
+	return true
+}
+
 // WaitForTrue waits until the provided func returns true. If the timeout is
 // reached before the function returns true, the test will fail.
 func (is *Is) WaitForTrue(timeout time.Duration, f func() bool) {
