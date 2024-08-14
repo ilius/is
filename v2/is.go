@@ -295,6 +295,12 @@ func (is *Is) NotNil(o any) bool {
 	return true
 }
 
+// Fail fails the test with given message
+func (is *Is) Fail(msg string) {
+	is.TB.Helper()
+	fail(is, msg)
+}
+
 // True checks the provided boolean to determine if it is true.
 func (is *Is) True(b bool) bool {
 	is.TB.Helper()

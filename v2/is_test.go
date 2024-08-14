@@ -408,3 +408,17 @@ func TestEqualer(t *testing.T) {
 		t.Fatalf("fail func should have been called 2 times, but was called %d times", hit)
 	}
 }
+
+func TestIsFail(t *testing.T) {
+	is := New(t)
+	failData := [][]any{}
+	fail = func(is *Is, format string, args ...any) {
+		failData = append(failData, append([]any{format}, args...))
+	}
+	is.Fail("fail message")
+
+	if !reflect.DeepEqual(failData, [][]any{{"fail message"}}) {
+		t.Logf("failData=%#v\n", failData)
+		t.FailNow()
+	}
+}
