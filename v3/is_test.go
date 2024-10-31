@@ -92,7 +92,7 @@ func Test(t *testing.T) {
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
-			fail = func(is *asserter, format string, args ...any) {
+			fail = func(_ *asserter, format string, args ...any) {
 				fmt.Printf(fmt.Sprintf("(test #%d) - ", i)+format, args...)
 				t.FailNow()
 			}
@@ -103,7 +103,7 @@ func Test(t *testing.T) {
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
-			fail = func(is *asserter, format string, args ...any) {
+			fail = func(_ *asserter, format string, args ...any) {
 				fmt.Printf(fmt.Sprintf("(test #%d) - ", i)+format, args...)
 				t.FailNow()
 			}
@@ -114,7 +114,7 @@ func Test(t *testing.T) {
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
-			fail = func(is *asserter, format string, args ...any) {
+			fail = func(_ *asserter, format string, args ...any) {
 				fmt.Printf(fmt.Sprintf("(test #%d) - ", i)+format, args...)
 				t.FailNow()
 			}
@@ -125,7 +125,7 @@ func Test(t *testing.T) {
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
-			fail = func(is *asserter, format string, args ...any) {
+			fail = func(_ *asserter, format string, args ...any) {
 				fmt.Printf(fmt.Sprintf("(test #%d) - ", i)+format, args...)
 				t.FailNow()
 			}
@@ -134,7 +134,7 @@ func Test(t *testing.T) {
 		assert.NotZero(test.e)
 	}
 
-	fail = func(is *asserter, format string, args ...any) {
+	fail = func(_ *asserter, format string, args ...any) {
 		fmt.Printf(format, args...)
 		t.FailNow()
 	}
@@ -158,12 +158,12 @@ func Test(t *testing.T) {
 		assert.Len(l, 3)
 	}
 
-	fail = func(is *asserter, format string, args ...any) {}
+	fail = func(_ *asserter, _ string, _ ...any) {} // is, format, args
 	assert.Equal((*testStruct)(nil), &testStruct{})
 	assert.Equal(&testStruct{}, (*testStruct)(nil))
 	assert.Equal((*testStruct)(nil), (*testStruct)(nil))
 
-	fail = func(is *asserter, format string, args ...any) {
+	fail = func(_ *asserter, format string, args ...any) {
 		fmt.Printf(format, args...)
 		t.FailNow()
 	}
@@ -203,7 +203,7 @@ func TestLaxNoFailure(t *testing.T) {
 
 	hit := 0
 
-	fail = func(is *asserter, format string, args ...any) {
+	fail = func(_ *asserter, _ string, _ ...any) { // is, format, args
 		hit++
 	}
 
@@ -222,7 +222,7 @@ func TestLaxFailure(t *testing.T) {
 	hitLax := 0
 	hitStrict := 0
 
-	fail = func(is *asserter, format string, args ...any) {
+	fail = func(is *asserter, _ string, _ ...any) { // is, format, args
 		if is.strict {
 			hitStrict++
 			return
@@ -245,7 +245,7 @@ func TestOneOf(t *testing.T) {
 	assert := New(t)
 
 	hit := 0
-	fail = func(is *asserter, format string, args ...any) {
+	fail = func(_ *asserter, _ string, _ ...any) { // is, format, args
 		hit++
 	}
 	assert.OneOf(2, 1, 2, 3)
@@ -261,7 +261,7 @@ func TestFailures(t *testing.T) {
 	assert := New(t)
 
 	hit := 0
-	fail = func(is *asserter, format string, args ...any) {
+	fail = func(_ *asserter, _ string, _ ...any) { // is, format, args
 		hit++
 	}
 
@@ -286,7 +286,7 @@ func TestWaitForTrue(t *testing.T) {
 	assert := New(t)
 
 	hit := 0
-	fail = func(is *asserter, format string, args ...any) {
+	fail = func(_ *asserter, _ string, _ ...any) { // is, format, args
 		hit++
 	}
 
@@ -319,7 +319,7 @@ func TestEqualer(t *testing.T) {
 	assert := New(t)
 
 	hit := 0
-	fail = func(is *asserter, format string, args ...any) {
+	fail = func(_ *asserter, _ string, _ ...any) { // is, format, args
 		hit++
 	}
 
