@@ -412,7 +412,7 @@ func TestEqualer(t *testing.T) {
 func TestIsFail(t *testing.T) {
 	is := New(t)
 	failData := [][]any{}
-	fail = func(is *Is, format string, args ...any) {
+	fail = func(_ *Is, format string, args ...any) {
 		failData = append(failData, append([]any{format}, args...))
 	}
 	is.Fail("fail message")
