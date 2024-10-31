@@ -100,7 +100,7 @@ func TestIs(t *testing.T) {
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
-			fail = func(is *Is, format string, args ...any) {
+			fail = func(_ *Is, format string, args ...any) {
 				fmt.Printf(fmt.Sprintf("(test #%d) - ", i)+format, args...)
 				t.FailNow()
 			}
@@ -111,7 +111,7 @@ func TestIs(t *testing.T) {
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
-			fail = func(is *Is, format string, args ...any) {
+			fail = func(_ *Is, format string, args ...any) {
 				fmt.Printf(fmt.Sprintf("(test #%d) - ", i)+format, args...)
 				t.FailNow()
 			}
@@ -122,7 +122,7 @@ func TestIs(t *testing.T) {
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
-			fail = func(is *Is, format string, args ...any) {
+			fail = func(_ *Is, format string, args ...any) {
 				fmt.Printf(fmt.Sprintf("(test #%d) - ", i)+format, args...)
 				t.FailNow()
 			}
@@ -133,7 +133,7 @@ func TestIs(t *testing.T) {
 
 	for i, test := range tests {
 		for _, cType := range test.cTypes {
-			fail = func(is *Is, format string, args ...any) {
+			fail = func(_ *Is, format string, args ...any) {
 				fmt.Printf(fmt.Sprintf("(test #%d) - ", i)+format, args...)
 				t.FailNow()
 			}
@@ -142,7 +142,7 @@ func TestIs(t *testing.T) {
 		is.NotZero(test.e)
 	}
 
-	fail = func(is *Is, format string, args ...any) {
+	fail = func(_ *Is, format string, args ...any) {
 		fmt.Printf(format, args...)
 		t.FailNow()
 	}
@@ -168,12 +168,12 @@ func TestIs(t *testing.T) {
 		is.Len(l, 3)
 	}
 
-	fail = func(is *Is, format string, args ...any) {}
+	fail = func(_ *Is, _ string, _ ...any) {} // is, format, args
 	is.Equal((*testStruct)(nil), &testStruct{})
 	is.Equal(&testStruct{}, (*testStruct)(nil))
 	is.Equal((*testStruct)(nil), (*testStruct)(nil))
 
-	fail = func(is *Is, format string, args ...any) {
+	fail = func(_ *Is, format string, args ...any) {
 		fmt.Printf(format, args...)
 		t.FailNow()
 	}
@@ -258,7 +258,7 @@ func TestIsLax(t *testing.T) {
 
 	hit := 0
 
-	fail = func(is *Is, format string, args ...any) {
+	fail = func(is *Is, _ string, _ ...any) { // is, format, args
 		if is.strict {
 			t.FailNow()
 		}
@@ -276,7 +276,7 @@ func TestIsOneOf(t *testing.T) {
 	is := New(t)
 
 	hit := 0
-	fail = func(is *Is, format string, args ...any) {
+	fail = func(_ *Is, _ string, _ ...any) { // is, format, args
 		hit++
 	}
 	is.OneOf(2, 1, 2, 3)
@@ -292,7 +292,7 @@ func TestContains(t *testing.T) {
 	is := New(t)
 
 	hit := 0
-	fail = func(is *Is, format string, args ...any) {
+	fail = func(_ *Is, _ string, _ ...any) { // is, format, args
 		hit++
 	}
 
@@ -309,7 +309,7 @@ func TestIsFailures(t *testing.T) {
 	is := New(t)
 
 	hit := 0
-	fail = func(is *Is, format string, args ...any) {
+	fail = func(_ *Is, _ string, _ ...any) { // is, format, args
 		hit++
 	}
 
@@ -335,7 +335,7 @@ func TestWaitForTrue(t *testing.T) {
 	is := New(t)
 
 	hit := 0
-	fail = func(is *Is, format string, args ...any) {
+	fail = func(_ *Is, _ string, _ ...any) { // is, format, args
 		hit++
 	}
 
@@ -368,7 +368,7 @@ func TestEqualer(t *testing.T) {
 	is := New(t)
 
 	hit := 0
-	fail = func(is *Is, format string, args ...any) {
+	fail = func(_ *Is, _ string, _ ...any) { // is, format, args
 		hit++
 	}
 
