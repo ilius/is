@@ -370,7 +370,12 @@ func (is *Is) Len(o any, l int) bool {
 		(t.Kind() != reflect.Array &&
 			t.Kind() != reflect.Slice &&
 			t.Kind() != reflect.Map) {
-		fail(is, "expected object '%s' to be of length '%d', but the object is not one of array, slice or map", objectTypeName(o), l)
+		fail(
+			is,
+			"expected object '%s' to be of length '%d', but the object is not one of array, slice or map",
+			objectTypeName(o),
+			l,
+		)
 		return false
 	}
 
@@ -400,7 +405,12 @@ func (is *Is) ShouldPanic(f func()) {
 func (is *Is) EqualType(expected, actual any) bool {
 	is.TB.Helper()
 	if reflect.TypeOf(expected) != reflect.TypeOf(actual) {
-		fail(is, "expected objects '%s' to be of the same type as object '%s'", objectTypeName(expected), objectTypeName(actual))
+		fail(
+			is,
+			"expected objects '%s' to be of the same type as object '%s'",
+			objectTypeName(expected),
+			objectTypeName(actual),
+		)
 		return false
 	}
 	return true
