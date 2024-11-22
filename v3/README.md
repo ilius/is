@@ -4,7 +4,7 @@
 
 `is` has been archived in favor of [Proof](https://github.com/tystil/proof)
 
------------
+______________________________________________________________________
 
 Is provides a quick, clean and simple framework for writing Go tests.
 
