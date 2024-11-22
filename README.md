@@ -71,5 +71,5 @@ Strict mode, in this case, applies only to the line on which it is invoked, as w
 
 All pull requests should:
 
-1. Pass [golangci-lint run](https://github.com/golangci/golangci-lint) with no warnings.
-2. Be `go fmt` formatted.
+- Pass [golangci-lint run](https://github.com/golangci/golangci-lint) with no warnings.
+- Be `go fmt` formatted.
