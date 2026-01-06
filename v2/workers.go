@@ -3,6 +3,7 @@ package is
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"reflect"
 )
 
@@ -60,6 +61,18 @@ func isZero(o any) bool {
 	}
 }
 
+func convertibleTo(aValue reflect.Value, bValue reflect.Value) (ok bool) {
+	aType := aValue.Type()
+	bType := bValue.Type()
+	defer func() {
+		r := recover()
+		if r != nil {
+			log.Printf("panic in ConvertibleTo: %v\n", r)
+		}
+	}()
+	return aType.ConvertibleTo(bType)
+}
+
 func isEqual(a any, b any) bool {
 	if isNil(a) || isNil(b) {
 		if isNil(a) && !isNil(b) {
@@ -83,7 +96,7 @@ func isEqual(a any, b any) bool {
 	aValue := reflect.ValueOf(a)
 	bValue := reflect.ValueOf(b)
 	// Convert types and compare
-	if bValue.Type().ConvertibleTo(aValue.Type()) {
+	if convertibleTo(bValue, aValue) {
 		return reflect.DeepEqual(a, bValue.Convert(aValue.Type()).Interface())
 	}
 
